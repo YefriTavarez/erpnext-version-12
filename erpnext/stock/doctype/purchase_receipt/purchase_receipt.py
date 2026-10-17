@@ -143,6 +143,9 @@ class PurchaseReceipt(BuyingController):
 				check_list.append(d.purchase_order)
 				check_on_hold_or_closed_status('Purchase Order', d.purchase_order)
 
+	def update_only_stock_ledger(self):
+		self.update_stock_ledger()
+
 	# on submit
 	def on_submit(self):
 		super(PurchaseReceipt, self).on_submit()
@@ -649,4 +652,3 @@ def get_item_account_wise_additional_cost(purchase_document):
 						account.amount * item.get(based_on_field) / total_item_cost
 
 	return item_account_wise_cost
-

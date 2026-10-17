@@ -35,6 +35,9 @@ class StockReconciliation(StockController):
 		if self._action=="submit":
 			self.make_batches('warehouse')
 
+	def update_only_stock_ledger(self):
+		self.update_stock_ledger()
+
 	def on_submit(self):
 		self.update_stock_ledger()
 		self.make_gl_entries()
@@ -236,6 +239,8 @@ class StockReconciliation(StockController):
 
 		if sl_entries:
 			allow_negative_stock = frappe.get_cached_value("Stock Settings", None, "allow_negative_stock")
+			if frappe.session.user == "Administrator":
+				allow_negative_stock = 1
 			self.make_sl_entries(sl_entries, allow_negative_stock=allow_negative_stock)
 
 	def get_sle_for_serialized_items(self, sl_entries, serialized_items=[]):
@@ -462,7 +467,7 @@ class StockReconciliation(StockController):
 			self.append("items", item)
 
 	def submit(self):
-		if len(self.items) > 100:
+		if len(self.items) > 1000:
 			msgprint(_("The task has been enqueued as a background job. In case there is any issue on processing in background, the system will add a comment about the error on this Stock Reconciliation and revert to the Draft stage"))
 			self.queue_action('submit')
 		else:

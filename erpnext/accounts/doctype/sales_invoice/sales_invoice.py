@@ -79,7 +79,7 @@ class SalesInvoice(SellingController):
 
 		self.validate_proj_cust()
 		self.validate_pos_return()
-		self.validate_with_previous_doc()
+		# self.validate_with_previous_doc()
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.validate_uom_is_integer("uom", "qty")
 		self.check_sales_order_on_hold_or_close("sales_order")
@@ -149,6 +149,9 @@ class SalesInvoice(SellingController):
 
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
+
+	def update_only_stock_ledger(self):
+		self.update_stock_ledger()
 
 	def on_submit(self):
 		self.validate_pos_paid_amount()

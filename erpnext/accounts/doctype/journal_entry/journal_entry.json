@@ -106,6 +106,7 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date",
    "no_copy": 1,
    "oldfieldname": "posting_date",
@@ -489,8 +490,8 @@
  "icon": "fa fa-file-text",
  "idx": 176,
  "is_submittable": 1,
- "modified": "2020-01-16 13:05:30.634226",
- "modified_by": "Administrator",
+ "modified": "2021-12-17 09:59:21.556905",
+ "modified_by": "mildredtaveras@hotmail.com",
  "module": "Accounts",
  "name": "Journal Entry",
  "owner": "Administrator",

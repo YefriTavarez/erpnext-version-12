@@ -26,10 +26,14 @@ def get_sle(**args):
 		condition += " and " if condition else " where "
 		condition += "`{0}`=%s".format(key)
 		values.append(value)
+	
+	return frappe.db.sql("""
+		SELECT * FROM `tabStock Ledger Entry`
+		{condition}
+		ORDER BY posting_date DESC, posting_time DESC, creation DESC
+		LIMIT 1
+	""".format(condition=condition), values, as_dict=1)
 
-	return frappe.db.sql("""select * from `tabStock Ledger Entry` %s
-		order by timestamp(posting_date, posting_time) desc, creation desc limit 1"""% condition,
-		values, as_dict=1)
 
 class TestStockEntry(unittest.TestCase):
 	def tearDown(self):

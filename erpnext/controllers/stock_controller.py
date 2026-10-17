@@ -400,6 +400,8 @@ def update_gl_entries_after(posting_date, posting_time, for_warehouses=None, for
 
 	for voucher_type, voucher_no in future_stock_vouchers:
 		existing_gle = gle.get((voucher_type, voucher_no), [])
+		if not frappe.db.exists(voucher_type, voucher_no):
+			continue
 		voucher_obj = frappe.get_doc(voucher_type, voucher_no)
 		expected_gle = voucher_obj.get_gl_entries(warehouse_account)
 		if expected_gle:
@@ -438,12 +440,17 @@ def get_future_stock_vouchers(posting_date, posting_time, for_warehouses=None, f
 	if for_warehouses:
 		condition += " and warehouse in ({})".format(", ".join(["%s"] * len(for_warehouses)))
 		values += for_warehouses
-
-	for d in frappe.db.sql("""select distinct sle.voucher_type, sle.voucher_no
-		from `tabStock Ledger Entry` sle
-		where timestamp(sle.posting_date, sle.posting_time) >= timestamp(%s, %s) {condition}
-		order by timestamp(sle.posting_date, sle.posting_time) asc, creation asc for update""".format(condition=condition),
-		tuple([posting_date, posting_time] + values), as_dict=True):
+	
+	for d in frappe.db.sql("""
+		SELECT DISTINCT sle.voucher_type, sle.voucher_no
+		FROM `tabStock Ledger Entry` sle
+		WHERE (sle.posting_date > %s
+			OR (sle.posting_date = %s AND sle.posting_time >= %s))
+		{condition}
+		ORDER BY sle.posting_date ASC, sle.posting_time ASC, creation ASC
+		FOR UPDATE
+	""".format(condition=condition),
+		tuple([posting_date, posting_date, posting_time] + values), as_dict=True):
 			future_stock_vouchers.append([d.voucher_type, d.voucher_no])
 
 	return future_stock_vouchers

@@ -624,6 +624,8 @@ def make_delivery_note(source_name, target_doc=None, skip_item_mapping=False):
 def make_sales_invoice(source_name, target_doc=None, ignore_permissions=False):
 	def postprocess(source, target):
 		set_missing_values(source, target)
+		# Set the specific warehouse value for set_warehouse
+		target.set_warehouse = "Productos terminados - L"
 		#Get the advance paid Journal Entries in Sales Invoice Advance
 		if target.get("allocate_advances_automatically"):
 			target.set_advances()

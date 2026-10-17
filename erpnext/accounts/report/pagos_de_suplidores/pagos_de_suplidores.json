@@ -1,0 +1,31 @@
+{
+ "add_total_row": 1,
+ "creation": "2022-05-17 18:06:59.563741",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{}",
+ "modified": "2022-05-17 18:08:04.086620",
+ "modified_by": "Administrator",
+ "module": "Accounts",
+ "name": "Pagos de Suplidores",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Journal Entry",
+ "report_name": "Pagos de Suplidores",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Auditor"
+  }
+ ]
+}

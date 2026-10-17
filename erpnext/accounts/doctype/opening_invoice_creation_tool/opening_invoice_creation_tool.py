@@ -108,7 +108,9 @@ class OpeningInvoiceCreationTool(Document):
 					"letter_head": company_details.get("default_letter_head")
 				})
 
-			doc = frappe.get_doc(args).insert()
+			doc = frappe.get_doc(args)
+			doc.flags.ignore_mandatory = True
+			doc.insert()
 			doc.submit()
 			names.append(doc.name)
 
@@ -209,5 +211,3 @@ def get_temporary_opening_account(company=None):
 		frappe.throw(_("Please add a Temporary Opening account in Chart of Accounts"))
 
 	return accounts[0].name
-
-

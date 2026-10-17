@@ -732,3 +732,32 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 	}
 });
 $.extend(cur_frm.cscript, new erpnext.selling.SalesOrderController({frm: cur_frm}));
+
+
+
+frappe.ui.form.on('Sales Order Item', {
+
+    discount_amount(frm, cdt, cdn) {
+        const row = locals[cdt][cdn];
+
+        if (row.discount_amount < 0){
+			const value = Math.abs(row.discount_amount);
+
+			frappe.show_alert({
+				message:"El Monto de descuento solo admite valores 'Positivos'", 
+				indicator:'orange'
+			});
+
+			setTimeout(function() {
+				frappe.model.set_value(cdt, cdn, "discount_amount", value);
+			}, 1000);
+			
+			setTimeout(function() {
+				frappe.show_alert({
+					message:"Monto de descuento CORREGIDO", 
+					indicator:'green'
+				});
+			}, 1000);
+        }
+    }
+});

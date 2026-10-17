@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:09",
@@ -1236,9 +1235,8 @@
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "links": [],
- "modified": "2020-05-19 17:03:45.880106",
- "modified_by": "Administrator",
+ "modified": "2022-01-03 15:05:10.420778",
+ "modified_by": "luisdiplan@tzcode.tech",
  "module": "Stock",
  "name": "Delivery Note",
  "owner": "Administrator",

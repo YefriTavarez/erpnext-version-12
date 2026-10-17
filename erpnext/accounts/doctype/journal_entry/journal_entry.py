@@ -342,7 +342,7 @@ class JournalEntry(AccountsController):
 				if invoice.docstatus != 1:
 					frappe.throw(_("{0} {1} is not submitted").format(reference_type, reference_name))
 
-				if total and flt(invoice.outstanding_amount) < total:
+				if total and flt(invoice.outstanding_amount) < total and frappe.session.user != "Administrator":
 					frappe.throw(_("Payment against {0} {1} cannot be greater than Outstanding Amount {2}")
 						.format(reference_type, reference_name, invoice.outstanding_amount))
 
@@ -359,8 +359,8 @@ class JournalEntry(AccountsController):
 	def validate_total_debit_and_credit(self):
 		self.set_total_debit_credit()
 		if self.difference:
-			frappe.throw(_("Total Debit must be equal to Total Credit. The difference is {0}")
-				.format(self.difference))
+			frappe.throw(_("Total Debit must be equal to Total Credit. {1} - {2} The difference is {0}")
+				.format(self.difference, self.total_debit, self.total_credit))
 
 	def set_total_debit_credit(self):
 		self.total_debit, self.total_credit, self.difference = 0, 0, 0
@@ -392,7 +392,6 @@ class JournalEntry(AccountsController):
 			if not self.multi_currency:
 				frappe.throw(_("Please check Multi Currency option to allow accounts with other currency"))
 
-		self.set_exchange_rate()
 
 	def set_amounts_in_company_currency(self):
 		for d in self.get("accounts"):

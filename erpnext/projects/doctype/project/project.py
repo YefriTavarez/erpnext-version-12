@@ -280,6 +280,7 @@ def hourly_reminder():
 			send_project_update_email_to_users(project.name)
 
 def project_status_update_reminder():
+	return # Skip for now. Logomarca is not using Projects anymore.
 	daily_reminder()
 	twice_daily_reminder()
 	weekly_reminder()

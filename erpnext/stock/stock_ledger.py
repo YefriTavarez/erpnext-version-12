@@ -207,6 +207,7 @@ class update_entries_after(object):
 		if diff < 0 and abs(diff) > 0.0001:
 			# negative stock!
 			exc = sle.copy().update({"diff": diff})
+			# print(frappe.as_json(exc))
 			self.exceptions.append(exc)
 			return False
 		else:
@@ -419,16 +420,20 @@ class update_entries_after(object):
 
 		if ((self.exceptions[0]["voucher_type"], self.exceptions[0]["voucher_no"]) in
 			frappe.local.flags.currently_saving):
-
-			msg = _("{0} units of {1} needed in {2} to complete this transaction.").format(
-				abs(deficiency), frappe.get_desk_link('Item', self.item_code),
-				frappe.get_desk_link('Warehouse', self.warehouse))
+			msg = _("{0} units of {1} needed in {2} to complete {3}.").format(
+				abs(deficiency),
+				frappe.get_desk_link('Item', self.item_code), 
+				frappe.get_desk_link('Warehouse', self.warehouse),
+				frappe.get_desk_link(self.exceptions[0]["voucher_type"], self.exceptions[0]["voucher_no"])
+			)
 		else:
-			msg = _("{0} units of {1} needed in {2} on {3} {4} for {5} to complete this transaction.").format(
+			msg = _("{0} units of {1} needed in {2} on {3} {4} for {5} to complete this transaction.<br>").format(
 				abs(deficiency), frappe.get_desk_link('Item', self.item_code),
 				frappe.get_desk_link('Warehouse', self.warehouse),
 				self.exceptions[0]["posting_date"], self.exceptions[0]["posting_time"],
-				frappe.get_desk_link(self.exceptions[0]["voucher_type"], self.exceptions[0]["voucher_no"]))
+				frappe.get_desk_link(self.exceptions[0]["voucher_type"], self.exceptions[0]["voucher_no"]),
+				self
+			)
 
 		if self.verbose:
 			frappe.throw(msg, NegativeStockError, title='Insufficient Stock')
@@ -453,8 +458,7 @@ def get_previous_sle(args, for_update=False):
 	sle = get_stock_ledger_entries(args, "<=", "desc", "limit 1", for_update=for_update)
 	return sle and sle[0] or {}
 
-def get_stock_ledger_entries(previous_sle, operator=None,
-	order="desc", limit=None, for_update=False, debug=False, check_serial_no=True):
+def get_stock_ledger_entries(previous_sle, operator=None, order="desc", limit=None, for_update=False, debug=False, check_serial_no=True):
 	"""get stock ledger entries filtered by specific posting datetime conditions"""
 	conditions = " and timestamp(posting_date, posting_time) {0} timestamp(%(posting_date)s, %(posting_time)s)".format(operator)
 	if previous_sle.get("warehouse"):

@@ -17,6 +17,7 @@ from erpnext.controllers.accounts_controller import AccountsController
 
 class Asset(AccountsController):
 	def validate(self):
+		self.validate_cost_center()
 		self.validate_asset_values()
 		self.validate_asset_and_reference()
 		self.validate_item()
@@ -96,6 +97,13 @@ class Asset(AccountsController):
 		if self.item_code and not self.get('finance_books'):
 			finance_books = get_item_details(self.item_code, self.asset_category)
 			self.set('finance_books', finance_books)
+
+	def validate_cost_center(self):
+		# if cost_center is set, ensure it is not a group cost center
+		if self.cost_center:
+			is_group = frappe.get_value("Cost Center", self.cost_center, "is_group")
+			if is_group:
+				frappe.throw(_("Asset {0} cannot be created with a group cost center {1}").format(self.name, self.cost_center))
 
 	def validate_asset_values(self):
 		if not self.asset_category:
@@ -335,15 +343,15 @@ class Asset(AccountsController):
 				self.number_of_depreciations_booked = 0
 
 			if cint(self.number_of_depreciations_booked) > cint(row.total_number_of_depreciations):
-				frappe.throw(_("Number of Depreciations Booked cannot be greater than Total Number of Depreciations"))
+				frappe.throw(_(f"Number of Depreciations Booked ({self.number_of_depreciations_booked}) cannot be greater than Total Number of Depreciations {row.total_number_of_depreciations}"))
 
 		if row.depreciation_start_date and getdate(row.depreciation_start_date) < getdate(nowdate()):
 			frappe.msgprint(_("Depreciation Row {0}: Depreciation Start Date is entered as past date")
 				.format(row.idx), title=_('Warning'), indicator='red')
 
 		if row.depreciation_start_date and getdate(row.depreciation_start_date) < getdate(self.purchase_date):
-			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date cannot be before Purchase Date")
-				.format(row.idx))
+			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date ({1}) cannot be before Purchase Date {2}")
+				.format(row.idx, row.depreciation_start_date, self.purchase_date))
 
 		if row.depreciation_start_date and getdate(row.depreciation_start_date) < getdate(self.available_for_use_date):
 			frappe.throw(_("Depreciation Row {0}: Next Depreciation Date cannot be before Available-for-use Date")

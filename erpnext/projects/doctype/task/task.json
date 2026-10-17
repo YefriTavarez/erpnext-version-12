@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "TASK-.YYYY.-.#####",
  "creation": "2013-01-29 19:25:50",
@@ -366,9 +365,8 @@
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
- "links": [],
  "max_attachments": 5,
- "modified": "2020-07-03 12:36:04.960457",
+ "modified": "2024-05-31 11:54:28.992911",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
@@ -393,6 +391,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "project",
- "title_field": "subject",
- "track_seen": 1
+ "title_field": "subject"
 }

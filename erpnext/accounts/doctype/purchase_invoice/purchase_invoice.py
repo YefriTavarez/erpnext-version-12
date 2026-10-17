@@ -340,6 +340,9 @@ class PurchaseInvoice(BuyingController):
 					frappe.throw(_("Stock cannot be updated against Purchase Receipt {0}")
 						.format(item.purchase_receipt))
 
+	def update_only_stock_ledger(self):
+		self.update_stock_ledger()
+
 	def on_submit(self):
 		super(PurchaseInvoice, self).on_submit()
 

@@ -162,14 +162,14 @@ def get_stock_ledger_entries(filters, items):
 
 	return frappe.db.sql("""
 		select
-			sle.item_code, warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
+			sle.item_code,(select disabled from `tabItem` where name = sle.item_code) as disabled, warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
 			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
 			sle.item_code as name, sle.voucher_no
 		from
 			`tabStock Ledger Entry` sle force index (posting_sort_index)
 		where sle.docstatus < 2 %s %s
 		order by sle.posting_date, sle.posting_time, sle.creation, sle.actual_qty""" % #nosec
-		(item_conditions_sql, conditions), as_dict=1)
+		(item_conditions_sql, conditions), as_dict=1, debug=True)
 
 def get_item_warehouse_map(filters, sle):
 	iwb_map = {}
@@ -179,6 +179,8 @@ def get_item_warehouse_map(filters, sle):
 	float_precision = cint(frappe.db.get_default("float_precision")) or 3
 
 	for d in sle:
+		if d.disabled:
+			continue
 		key = (d.company, d.item_code, d.warehouse)
 		if key not in iwb_map:
 			iwb_map[key] = frappe._dict({
@@ -210,10 +212,13 @@ def get_item_warehouse_map(filters, sle):
 				qty_dict.out_qty += abs(qty_diff)
 				qty_dict.out_val += abs(value_diff)
 
-		qty_dict.val_rate = d.valuation_rate
+		temp_rate = .756
+		qty_dict.val_rate = d.valuation_rate * temp_rate
 		qty_dict.bal_qty += qty_diff
-		qty_dict.bal_val += value_diff
-
+		# qty_dict.bal_val += value_diff
+		# if qty_dict.bal_qty == 0:
+		# 	qty_dict.bal_val = 0
+		qty_dict.bal_val = d.valuation_rate * temp_rate * qty_dict.bal_qty
 	iwb_map = filter_items_with_no_transactions(iwb_map, float_precision)
 
 	return iwb_map
@@ -296,7 +301,7 @@ def get_item_reorder_details(items):
 def validate_filters(filters):
 	if not (filters.get("item_code") or filters.get("warehouse")):
 		sle_count = flt(frappe.db.sql("""select count(name) from `tabStock Ledger Entry`""")[0][0])
-		if sle_count > 500000:
+		if sle_count > 5000000:
 			frappe.throw(_("Please set filter based on Item or Warehouse due to a large amount of entries."))
 
 def get_variants_attributes():

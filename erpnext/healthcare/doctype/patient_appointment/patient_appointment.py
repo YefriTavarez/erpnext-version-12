@@ -329,6 +329,7 @@ def create_encounter(appointment):
 
 
 def set_appointment_reminder():
+	return # Skip for now. Logomarca is not using Appointment Reminders.
 	if frappe.db.get_single_value("Healthcare Settings", "app_rem"):
 		remind_before = datetime.datetime.strptime(frappe.db.get_single_value("Healthcare Settings", "rem_before"), '%H:%M:%S')
 

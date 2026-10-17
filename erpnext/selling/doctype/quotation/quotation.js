@@ -23,6 +23,8 @@ frappe.ui.form.on('Quotation', {
 	refresh: function(frm) {
 		frm.trigger("set_label");
 		frm.trigger("set_dynamic_field_label");
+		
+		
 	},
 
 	quotation_to: function(frm) {
@@ -217,4 +219,32 @@ frappe.ui.form.on("Quotation Item", "stock_balance", function(frm, cdt, cdn) {
 	var d = frappe.model.get_doc(cdt, cdn);
 	frappe.route_options = {"item_code": d.item_code};
 	frappe.set_route("query-report", "Stock Balance");
+	
 })
+
+frappe.ui.form.on('Quotation Item', {
+
+    discount_amount(frm, cdt, cdn) {
+        const row = locals[cdt][cdn];
+
+        if (row.discount_amount < 0){
+			const value = Math.abs(row.discount_amount);
+
+			frappe.show_alert({
+				message:"El Monto de descuento solo admite valores 'Positivos'", 
+				indicator:'orange'
+			});
+
+			setTimeout(function() {
+				frappe.model.set_value(cdt, cdn, "discount_amount", value);
+			}, 1000);
+			
+			setTimeout(function() {
+				frappe.show_alert({
+					message:"Monto de descuento CORREGIDO", 
+					indicator:'green'
+				});
+			}, 1000);
+        }
+    }
+});

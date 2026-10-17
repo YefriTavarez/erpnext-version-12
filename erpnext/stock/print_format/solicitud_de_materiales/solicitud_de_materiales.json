@@ -1,0 +1,23 @@
+{
+ "align_labels_right": 0,
+ "creation": "2023-02-20 16:22:10.305370",
+ "custom_format": 0,
+ "disabled": 0,
+ "doc_type": "Material Request",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "font": "Default",
+ "format_data": "[{\"fieldname\": \"print_heading_template\", \"fieldtype\": \"Custom HTML\", \"options\": \"<div class=\\\"print-heading\\\">\\t\\t\\t\\t<h2>Solicitud de Materiales<br><small>{{ doc.name }}</small>\\t\\t\\t\\t</h2></div>\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"material_request_type\", \"print_hide\": 0, \"label\": \"Tipo\"}, {\"fieldname\": \"customer\", \"print_hide\": 0, \"label\": \"Cliente\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"priority\", \"print_hide\": 0, \"label\": \"Prioridad\"}, {\"fieldname\": \"schedule_date\", \"print_hide\": 0, \"label\": \"Fecha de solicitud\"}, {\"fieldtype\": \"Section Break\", \"label\": \"\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"scan_barcode\", \"print_hide\": 0, \"label\": \"Escanear C\\u00f3digo de Barras\"}, {\"fieldname\": \"items\", \"print_hide\": 0, \"label\": \"\\u00cdtems\", \"visible_columns\": [{\"fieldname\": \"item_code\", \"print_width\": \"100px\", \"print_hide\": 0}, {\"fieldname\": \"description\", \"print_width\": \"250px\", \"print_hide\": 0}, {\"fieldname\": \"manufacturer\", \"print_width\": \"\", \"print_hide\": 0}, {\"fieldname\": \"manufacturer_part_no\", \"print_width\": \"\", \"print_hide\": 0}, {\"fieldname\": \"qty\", \"print_width\": \"80px\", \"print_hide\": 0}, {\"fieldname\": \"uom\", \"print_width\": \"70px\", \"print_hide\": 0}, {\"fieldname\": \"warehouse\", \"print_width\": \"100px\", \"print_hide\": 0}, {\"fieldname\": \"schedule_date\", \"print_width\": \"100px\", \"print_hide\": 0}, {\"fieldname\": \"project_center\", \"print_width\": \"\", \"print_hide\": 0}, {\"fieldname\": \"planning_document\", \"print_width\": \"\", \"print_hide\": 0}, {\"fieldname\": \"project\", \"print_width\": \"\", \"print_hide\": 0}]}, {\"fieldtype\": \"Section Break\", \"label\": \"More Information\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"requested_by\", \"print_hide\": 0, \"label\": \"Solicitado por\"}, {\"fieldname\": \"transaction_date\", \"print_hide\": 0, \"label\": \"Fecha de transacci\\u00f3n\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"production_planning_tool\", \"print_hide\": 0, \"label\": \"Planificaci\\u00f3n de Producci\\u00f3n\"}, {\"fieldtype\": \"Section Break\", \"label\": \"Terms and Conditions\"}, {\"fieldtype\": \"Column Break\"}, {\"fieldname\": \"terms\", \"print_hide\": 0, \"label\": \"Contenido de los t\\u00e9rminos y condiciones\"}]",
+ "idx": 0,
+ "line_breaks": 0,
+ "modified": "2023-02-20 16:31:38.675771",
+ "modified_by": "brenorramirez@tzcode.tech",
+ "module": "Stock",
+ "name": "Solicitud de Materiales",
+ "owner": "brenorramirez@tzcode.tech",
+ "print_format_builder": 1,
+ "print_format_type": "Jinja",
+ "raw_printing": 0,
+ "show_section_headings": 0,
+ "standard": "Yes"
+}

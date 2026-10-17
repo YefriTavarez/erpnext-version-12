@@ -57,12 +57,13 @@ class Bin(Document):
 
 	def get_first_sle(self):
 		sle = frappe.db.sql("""
-			select * from `tabStock Ledger Entry`
-			where item_code = %s
-			and warehouse = %s
-			order by timestamp(posting_date, posting_time) asc, creation asc
-			limit 1
+			SELECT * FROM `tabStock Ledger Entry`
+			WHERE item_code = %s
+			AND warehouse = %s
+			ORDER BY posting_date ASC, posting_time ASC, creation ASC
+			LIMIT 1
 		""", (self.item_code, self.warehouse), as_dict=1)
+
 		return sle and sle[0] or None
 
 	def update_reserved_qty_for_production(self):

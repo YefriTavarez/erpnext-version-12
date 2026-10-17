@@ -63,7 +63,7 @@ def get_stock_value_on(warehouse=None, posting_date=None, item_code=None):
 		SELECT item_code, stock_value, name, warehouse
 		FROM `tabStock Ledger Entry` sle
 		WHERE posting_date <= %s {0}
-		ORDER BY timestamp(posting_date, posting_time) DESC, creation DESC
+		ORDER BY posting_date DESC, posting_time DESC, creation DESC
 	""".format(condition), values, as_dict=1)
 
 	sle_map = {}
@@ -106,21 +106,26 @@ def get_stock_balance(item_code, warehouse, posting_date=None, posting_time=None
 		return last_entry.qty_after_transaction if last_entry else 0.0
 
 def get_serial_nos_data_after_transactions(args):
-	serial_nos = []
-	data = frappe.db.sql(""" SELECT serial_no, actual_qty
-		FROM `tabStock Ledger Entry`
-		WHERE
-			item_code = %(item_code)s and warehouse = %(warehouse)s
-			and timestamp(posting_date, posting_time) < timestamp(%(posting_date)s, %(posting_time)s)
-			order by posting_date, posting_time asc """, args, as_dict=1)
+    serial_nos = []
 
-	for d in data:
-		if d.actual_qty > 0:
-			serial_nos.extend(get_serial_nos_data(d.serial_no))
-		else:
-			serial_nos = list(set(serial_nos) - set(get_serial_nos_data(d.serial_no)))
+    # Adjust the query to remove the timestamp() function
+    data = frappe.db.sql("""
+        SELECT serial_no, actual_qty
+        FROM `tabStock Ledger Entry`
+        WHERE item_code = %(item_code)s
+          AND warehouse = %(warehouse)s
+          AND (posting_date < %(posting_date)s
+               OR (posting_date = %(posting_date)s AND posting_time < %(posting_time)s))
+        ORDER BY posting_date ASC, posting_time ASC
+    """, args, as_dict=1)
 
-	return '\n'.join(serial_nos)
+    for d in data:
+        if d.actual_qty > 0:
+            serial_nos.extend(get_serial_nos_data(d.serial_no))
+        else:
+            serial_nos = list(set(serial_nos) - set(get_serial_nos_data(d.serial_no)))
+
+    return '\n'.join(serial_nos)
 
 def get_serial_nos_data(serial_nos):
 	from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
@@ -324,10 +329,15 @@ def update_included_uom_in_report(columns, result, include_uom, conversion_facto
 		row[key] = value
 
 def get_available_serial_nos(args):
-	return frappe.db.sql(""" SELECT name from `tabSerial No`
-		WHERE item_code = %(item_code)s and warehouse = %(warehouse)s
-		 and timestamp(purchase_date, purchase_time) <= timestamp(%(posting_date)s, %(posting_time)s)
-	""", args, as_dict=1)
+    return frappe.db.sql("""
+        SELECT name
+        FROM `tabSerial No`
+        WHERE item_code = %(item_code)s
+          AND warehouse = %(warehouse)s
+          AND (purchase_date < %(posting_date)s
+               OR (purchase_date = %(posting_date)s AND purchase_time <= %(posting_time)s))
+    """, args, as_dict=1)
+
 
 def add_additional_uom_columns(columns, result, include_uom, conversion_factors):
 	if not include_uom or not conversion_factors:

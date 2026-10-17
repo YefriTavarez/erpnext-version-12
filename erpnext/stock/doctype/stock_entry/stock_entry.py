@@ -85,6 +85,9 @@ class StockEntry(StockController):
 		self.set_actual_qty()
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
 
+	def update_only_stock_ledger(self):
+		self.update_stock_ledger()
+
 	def on_submit(self):
 
 		self.update_stock_ledger()
@@ -765,6 +768,7 @@ class StockEntry(StockController):
 			'description'		  	: item.description,
 			'image'					: item.image,
 			'item_name' 		  	: item.item_name,
+			'item_group'			: item.item_group,
 			'cost_center'			: get_default_cost_center(args, item, item_group_defaults, brand_defaults, self.company),
 			'qty'					: args.get("qty"),
 			'transfer_qty'			: args.get('qty'),

@@ -557,6 +557,7 @@ frappe.ui.form.on('Stock Entry Detail', {
 						var d = locals[cdt][cdn];
 						$.each(r.message, function(k, v) {
 							if (v) {
+								
 								frappe.model.set_value(cdt, cdn, k, v); // qty and it's subsequent fields weren't triggered
 							}
 						});

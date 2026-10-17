@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
@@ -485,9 +484,8 @@
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "links": [],
- "modified": "2020-03-17 11:03:42.706907",
- "modified_by": "Administrator",
+ "modified": "2021-08-10 15:25:16.164809",
+ "modified_by": "brenorramirez@tzcode.tech",
  "module": "Selling",
  "name": "Customer",
  "name_case": "Title Case",

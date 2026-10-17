@@ -6,7 +6,7 @@ import frappe, os, json
 from frappe import _
 from frappe.utils import get_timestamp
 
-from frappe.utils import cint, today, formatdate
+from frappe.utils import cint, today, formatdate, get_first_day, add_months
 import frappe.defaults
 from frappe.cache_manager import clear_defaults_cache
 
@@ -423,26 +423,30 @@ def install_country_fixtures(company):
 
 
 def update_company_current_month_sales(company):
+	# Get the first and last day of the current month
+	first_day = get_first_day(today())
+	first_day_next_month = add_months(first_day, 1)
+
+	# Format for display (not for filtering)
 	current_month_year = formatdate(today(), "MM-yyyy")
 
 	results = frappe.db.sql('''
 		SELECT
 			SUM(base_grand_total) AS total,
-			DATE_FORMAT(`posting_date`, '%m-%Y') AS month_year
-		FROM
-			`tabSales Invoice`
+			DATE_FORMAT(posting_date, '%%m-%%Y') AS month_year
+		FROM `tabSales Invoice`
 		WHERE
-			DATE_FORMAT(`posting_date`, '%m-%Y') = '{current_month_year}'
+			posting_date >= %s
+			AND posting_date < %s
 			AND docstatus = 1
-			AND company = {company}
-		GROUP BY
-			month_year
-	'''.format(current_month_year=current_month_year, company=frappe.db.escape(company)),
-		as_dict = True)
+			AND company = %s
+		GROUP BY month_year
+	''', (first_day, first_day_next_month, company), as_dict=True)
 
-	monthly_total = results[0]['total'] if len(results) > 0 else 0
+	monthly_total = results[0]['total'] if results else 0
 
 	frappe.db.set_value("Company", company, "total_monthly_sales", monthly_total)
+
 
 def update_company_monthly_sales(company):
 	'''Cache past year monthly sales of every company based on sales invoices'''

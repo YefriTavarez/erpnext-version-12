@@ -76,7 +76,7 @@ def get_data(filters):
 
 	set_gl_entries_by_account(filters.company, filters.from_date,
 		filters.to_date, min_lft, max_rgt, filters, gl_entries_by_account, ignore_closing_entries=not flt(filters.with_period_closing_entry))
-
+	# let's print the how many record were found with the account '140206 - DEPRECIACION ACUMULADA EQUIPOS DE PRODUCCION - L'
 	total_row = calculate_values(accounts, gl_entries_by_account, opening_balances, filters, company_currency)
 	accumulate_values_into_parents(accounts, accounts_by_name)
 
@@ -194,6 +194,7 @@ def calculate_values(accounts, gl_entries_by_account, opening_balances, filters,
 		d["opening_credit"] = opening_balances.get(d.name, {}).get("opening_credit", 0)
 
 		for entry in gl_entries_by_account.get(d.name, []):
+			
 			if cstr(entry.is_opening) != "Yes":
 				d["debit"] += flt(entry.debit)
 				d["credit"] += flt(entry.credit)
@@ -213,6 +214,7 @@ def accumulate_values_into_parents(accounts, accounts_by_name):
 		if d.parent_account:
 			for key in value_fields:
 				accounts_by_name[d.parent_account][key] += d[key]
+	frappe.errprint(accounts_by_name)
 
 def prepare_data(accounts, filters, total_row, parent_children_map, company_currency):
 	data = []

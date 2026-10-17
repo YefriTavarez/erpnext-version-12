@@ -16,7 +16,16 @@ def post_depreciation_entries(date=None):
 	if not date:
 		date = today()
 	for asset in get_depreciable_assets(date):
-		make_depreciation_entry(asset, date)
+		try:
+			make_depreciation_entry(asset, date)
+		except Exception as e:
+			frappe.db.rollback() # explicit rollback to avoid cascading errors
+			frappe.log_error(f"Error posting depreciation entries for asset {asset}: {e}", "Asset Depreciation")
+			frappe.db.commit() # commit the error to prevent from rolling back the entire transaction in case of multiple assets
+			continue
+		else:
+			frappe.db.commit()
+		
 		frappe.db.commit()
 
 def get_depreciable_assets(date):
@@ -52,11 +61,16 @@ def make_depreciation_entry(asset_name, date=None):
 			je.posting_date = d.schedule_date
 			je.company = asset.company
 			je.finance_book = d.finance_book
-			je.remark = "Depreciation Entry against {0} worth {1}".format(asset_name, d.depreciation_amount)
+			je.cheque_date = d.schedule_date
+			je.cost_center = asset.cost_center
+			je.remark = je.user_remark = je.cheque_no = "Depreciation Entry against {0} worth {1}".format(
+				asset_name, d.depreciation_amount
+			)
 
 			credit_entry = {
 				"account": accumulated_depreciation_account,
 				"credit_in_account_currency": d.depreciation_amount,
+				"credit": d.depreciation_amount,
 				"reference_type": "Asset",
 				"reference_name": asset.name,
 				"cost_center": ""
@@ -65,6 +79,7 @@ def make_depreciation_entry(asset_name, date=None):
 			debit_entry = {
 				"account": depreciation_expense_account,
 				"debit_in_account_currency": d.depreciation_amount,
+				"debit": d.depreciation_amount,
 				"reference_type": "Asset",
 				"reference_name": asset.name,
 				"cost_center": depreciation_cost_center
@@ -145,7 +160,7 @@ def scrap_asset(asset_name):
 	je.naming_series = depreciation_series
 	je.posting_date = today()
 	je.company = asset.company
-	je.remark = "Scrap Entry for asset {0}".format(asset_name)
+	je.remark = je.user_remark = "Scrap Entry for asset {0}".format(asset_name)
 
 	for entry in get_gl_entries_on_asset_disposal(asset):
 		entry.update({

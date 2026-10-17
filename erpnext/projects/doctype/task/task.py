@@ -215,6 +215,7 @@ def set_multiple_status(names, status):
 		task.save()
 
 def set_tasks_as_overdue():
+	return # Skip for now. Logomarca is not using Tasks anymore.
 	tasks = frappe.get_all("Task", filters={"status": ["not in", ["Cancelled", "Completed"]]}, fields=["name", "status", "review_date"])
 	for task in tasks:
 		if task.status == "Pending Review":

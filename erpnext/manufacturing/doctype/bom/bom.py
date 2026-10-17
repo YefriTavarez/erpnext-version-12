@@ -145,6 +145,8 @@ class BOM(WebsiteGenerator):
 			import json
 			args = json.loads(args)
 
+		# args: {"item_code":"PRPRCA0065","bom_no":"","scrap_items":false,"qty":0,"stock_qty":0,"include_item_in_manufacturing":0,"stock_uom":"Unidad(es)","conversion_factor":0}
+
 		item = self.get_item_det(args['item_code'])
 		self.validate_rm_item(item)
 

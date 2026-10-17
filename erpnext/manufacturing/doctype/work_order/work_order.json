@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-01-10 16:34:16",
@@ -201,8 +200,10 @@
    "fieldname": "sales_order",
    "fieldtype": "Link",
    "in_global_search": 1,
+   "in_standard_filter": 1,
    "label": "Sales Order",
-   "options": "Sales Order"
+   "options": "Sales Order",
+   "reqd": 1
   },
   {
    "fieldname": "project",
@@ -469,9 +470,8 @@
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "links": [],
- "modified": "2019-12-04 11:20:04.695123",
- "modified_by": "Administrator",
+ "modified": "2024-08-20 17:15:46.269242",
+ "modified_by": "michel.colon@logomarca.com.do",
  "module": "Manufacturing",
  "name": "Work Order",
  "owner": "Administrator",
