@@ -157,10 +157,13 @@ def validate_account_for_perpetual_inventory(gl_map):
 			if account not in aii_accounts:
 				continue
 
-			account_bal, stock_bal, warehouse_list = get_stock_and_account_balance(account,
-				gl_map[0].posting_date, gl_map[0].company)
+			# account_bal, stock_bal, warehouse_list = get_stock_and_account_balance(account,
+			# 	gl_map[0].posting_date, gl_map[0].company)
 
 			if gl_map[0].voucher_type=="Journal Entry":
+				account_bal, stock_bal, warehouse_list = get_stock_and_account_balance(account,
+				gl_map[0].posting_date, gl_map[0].company)
+
 				# In case of Journal Entry, there are no corresponding SL entries,
 				# hence deducting currency amount
 				account_bal -= flt(gl_map[0].debit) - flt(gl_map[0].credit)
